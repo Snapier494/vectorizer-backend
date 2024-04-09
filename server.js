@@ -3,6 +3,7 @@ const request = require('request');
 const multer = require('multer');
 const fs = require('fs');
 const app = express();
+const path = require('path');
 const port = 8000; // or any port you prefer
 
 app.use((req, res, next) => {
@@ -18,9 +19,12 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
-// Define a route
+// Assuming 'build' directory is where your front-end build output resides
+app.use(express.static(path.join(__dirname, 'build')));
+
+// This route will serve your index.html file from the build directory
 app.get('/', (req, res) => {
-    res.send('Hello, World!');
+    res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
 // Configure multer to handle file uploads
