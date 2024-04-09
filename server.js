@@ -46,8 +46,7 @@ app.post('/vectorize', upload.single('imageData'), (req, res) => {
             formData: {
                 image: fs.createReadStream(imageData.path),
                 mode: 'test',
-                format: 'eps',
-                colors: '0'
+                file_format: 'png',                
             },
             auth: { user: 'vks5298npigd3lh', pass: 'jvh4jek39ossop8oggp8i5j2otefph218rc36rg3f6as4csm80i9' },
             followAllRedirects: true,
@@ -61,7 +60,7 @@ app.post('/vectorize', upload.single('imageData'), (req, res) => {
                 res.status(500).send({ error: 'Internal server error' });
             } else {
                 // Save result
-                console.log('body = ', body.toString('utf8'));
+                // console.log('body = ', body.toString('utf8'));
                 fs.writeFileSync("result.png", body);
                 res.status(200).send({ message: 'Image vectorized successfully', vectorizedData: body.toString('utf8') });
             }
