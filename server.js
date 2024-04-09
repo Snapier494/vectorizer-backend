@@ -38,7 +38,12 @@ const upload = multer({
 app.post('/vectorize', upload.single('imageData'), (req, res) => {
     try {
         const imageData = req.file;
+        const {processingMax_colors, outputBitmapAnti_aliasing_mode, outputDraw_style, outputStokesUse_override_color} = req.body;
         console.log('imageFile = ', imageData);
+        console.log('processingMax_colors = ', processingMax_colors);
+        console.log('outputBitmapAnti_aliasing_mode = ', outputBitmapAnti_aliasing_mode);
+        console.log('outputDraw_style = ', outputDraw_style);
+        console.log('outputStokesUse_override_color = ', outputStokesUse_override_color);
 
         // Send the image data to Vectorizer AI API
         request.post({
@@ -46,7 +51,13 @@ app.post('/vectorize', upload.single('imageData'), (req, res) => {
             formData: {
                 image: fs.createReadStream(imageData.path),
                 mode: 'test',
-                file_format: 'png',                
+                'processing.max_colors': processingMax_colors,
+                'output.bitmap.anti_aliasing_mode': outputBitmapAnti_aliasing_mode,
+                'output.draw_style': outputDraw_style,
+                // 'output.shape_stacking': 'stacked',
+                // 'output.group_by': 'color',
+                // 'output.svg.adobe_compatibility_mode': 'true',
+                'output.strokes.use_override_color': outputStokesUse_override_color,              
             },
             auth: { user: 'vks5298npigd3lh', pass: 'jvh4jek39ossop8oggp8i5j2otefph218rc36rg3f6as4csm80i9' },
             followAllRedirects: true,
