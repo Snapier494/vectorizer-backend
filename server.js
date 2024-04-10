@@ -79,14 +79,14 @@ app.post('/vectorize', upload.single('imageData'), (req, res) => {
 
         if (viewMode === 'test') {
             formData.mode = 'test';
+
         }
 
         // Send the image data to Vectorizer AI API
         request.post({
             url: 'https://vectorizer.ai/api/v1/vectorize',
             formData: formData,
-            // auth: { user: 'vks5298npigd3lh', pass: 'jvh4jek39ossop8oggp8i5j2otefph218rc36rg3f6as4csm80i9' },
-            auth: { user: process.env.VECTORIZED_USER, pass: process.env.VECTORIZED_PASS },
+            auth: { user: (viewMode === 'test' ? 'vks5298npigd3lh' : process.env.VECTORIZED_USER), pass: (viewMode === 'test' ? 'jvh4jek39ossop8oggp8i5j2otefph218rc36rg3f6as4csm80i9' : process.env.VECTORIZED_PASS) },
             followAllRedirects: true,
             encoding: null
         }, function (error, response, body) {
