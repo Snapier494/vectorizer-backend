@@ -42,7 +42,7 @@ app.post('/vectorize', upload.single('imageData'), (req, res) => {
         const {viewMode, processingMax_colors, outputBitmapAnti_aliasing_mode, outputDraw_style, outputStokesUse_override_color, 
             outputSvgAdobe_compatibility_mode, outputGroup_by, outputShape_stacking, outputDxfCompatibility_level,
             outputParameterized_shapes_flatten, outputCurves_allowed_quadratic_bezier, outputCurves_allowed_cubic_bezier,
-            outputCurves_allowed_circular_arc, outputCurves_allowed_elliptical_arc
+            outputCurves_allowed_circular_arc, outputCurves_allowed_elliptical_arc, outputGap_filler_enabled
             } = req.body;
         console.log('imageFile = ', imageData);
         console.log('ViewMode = ', viewMode);
@@ -59,6 +59,7 @@ app.post('/vectorize', upload.single('imageData'), (req, res) => {
         console.log('outputCurves_allowed_cubic_bezier = ', outputCurves_allowed_cubic_bezier);
         console.log('outputCurves_allowed_circular_arc = ', outputCurves_allowed_circular_arc);
         console.log('outputCurves_allowed_elliptical_arc = ', outputCurves_allowed_elliptical_arc);
+        console.log('outputGap_filler_enabled = ', outputGap_filler_enabled);
         
         const formData = {
             image: fs.createReadStream(imageData.path),
@@ -75,6 +76,7 @@ app.post('/vectorize', upload.single('imageData'), (req, res) => {
             'output.curves.allowed.cubic_bezier' : outputCurves_allowed_cubic_bezier,
             'output.curves.allowed.circular_arc' : outputCurves_allowed_circular_arc,
             'output.curves.allowed.elliptical_arc' : outputCurves_allowed_elliptical_arc,
+            'output.gap_filler.enabled' : outputGap_filler_enabled
         };
 
         if (viewMode === 'test') {
