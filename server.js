@@ -1,6 +1,7 @@
 const express = require('express');
 const request = require('request');
 const multer = require('multer');
+const nFetch = require("node-fetch");
 const fs = require('fs');
 const app = express();
 const path = require('path');
@@ -34,6 +35,45 @@ const upload = multer({
     limits: {
         fileSize: 50 * 1024 * 1024, // 10MB, adjust this value according to your requirements
     },
+});
+
+app.get('/fetch-image', async (req, res) => {
+    try {
+        const { imageUrl } = req.query;
+        
+        // Validate imageUrl
+        if (!imageUrl || typeof imageUrl !== 'string') {
+            throw new Error('imageUrl parameter is missing or invalid');
+        }
+
+        // Check if the URL is valid
+        const urlRegex = /^(http|https):\/\/[^ "]+$/;
+        if (!urlRegex.test(imageUrl)) {
+            throw new Error('Invalid imageUrl format');
+        }
+
+        console.log('imageUrl = ', imageUrl);
+
+        // Fetch the image
+        const response = await nFetch(imageUrl);
+        
+        // Check if the response is successful
+        if (!response.ok) {
+            throw new Error(`Failed to fetch image: ${response.statusText}`);
+        }
+        
+        // Set appropriate Content-Type header
+        const contentType = response.headers.get('Content-Type');
+        if (!contentType || !contentType.startsWith('image/')) {
+            throw new Error('Response is not an image');
+        }
+        console.log('contentType = ', contentType);
+        // Stream the image directly to the response
+        response.body.pipe(res);
+    } catch (error) {
+        console.error('Error fetching image:', error);
+        res.status(500).send('Internal Server Error');
+    }
 });
 
 app.post('/vectorize', upload.single('imageData'), (req, res) => {
@@ -88,7 +128,7 @@ app.post('/vectorize', upload.single('imageData'), (req, res) => {
         request.post({
             url: 'https://vectorizer.ai/api/v1/vectorize',
             formData: formData,
-            auth: { user: (viewMode === 'test' ? 'vks5298npigd3lh' : process.env.VECTORIZED_USER), pass: (viewMode === 'test' ? 'jvh4jek39ossop8oggp8i5j2otefph218rc36rg3f6as4csm80i9' : process.env.VECTORIZED_PASS) },
+            auth: { user: (viewMode === 'test' ? process.env.TEST_VECTORIZED_USER : process.env.VECTORIZED_USER), pass: (viewMode === 'test' ? process.env.TEST_VECTORIZED_PASS : process.env.VECTORIZED_PASS) },
             followAllRedirects: true,
             encoding: null
         }, function (error, response, body) {
